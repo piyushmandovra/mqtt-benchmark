@@ -143,20 +143,17 @@ func (c *Client) pubMessages(in, out chan *Message, doneGen, donePub chan bool) 
 			case m := <-in:
 				m.Sent = time.Now()
 				msg := randstr.String(c.MsgSize)
-				topicList := strings.Split(c.MsgTopic, ",")
-				for _, topicI := range topicList {
-					payload := fmt.Sprintf("%v,%v,%v,%v,%v", BrokerIP, c.ID, strconv.FormatInt(time.Now().UnixNano()/1000000, 10), ctr, msg)
-					token := client.Publish(topicI, m.QoS, false, payload)
-					token.Wait()
-					if token.Error() != nil {
-						log.Printf("CLIENT %v Error sending message: %v\n", c.ID, token.Error())
-						m.Error = true
-					} else {
-						m.Delivered = time.Now()
-						m.Error = false
-					}
-					out <- m
+				payload := fmt.Sprintf("%v,%v,%v,%v,%v", BrokerIP, c.ID, strconv.FormatInt(time.Now().UnixNano()/1000000, 10), ctr, msg)
+				token := client.Publish(c.MsgTopic, m.QoS, false, payload)
+				token.Wait()
+				if token.Error() != nil {
+					log.Printf("CLIENT %v Error sending message: %v\n", c.ID, token.Error())
+					m.Error = true
+				} else {
+					m.Delivered = time.Now()
+					m.Error = false
 				}
+				out <- m
 				time.Sleep(time.Duration(c.Delay) * time.Millisecond)	
 				if ctr > 0 && ctr%100 == 0 {
 					if !c.Quiet {

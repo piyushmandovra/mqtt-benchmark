@@ -110,7 +110,6 @@ func main() {
 			Folder:	    *folderName,
 		}	
 		go c.Run(resCh)
-
 		time.Sleep(time.Duration(*block) * time.Millisecond)
 	}
 
