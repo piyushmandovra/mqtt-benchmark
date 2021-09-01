@@ -62,7 +62,7 @@ func main() {
 
 	var (
 		broker     = flag.String("broker", "tcp://localhost:1883", "MQTT broker endpoint as scheme://host:port")
-		topic      = flag.String("topic", "/test", "MQTT topic for outgoing messages")
+		topic      = flag.String("topic", "t1,t2", "MQTT topic for outgoing messages")
 		username   = flag.String("username", "", "MQTT username (empty if auth disabled)")
 		password   = flag.String("password", "", "MQTT password (empty if auth disabled)")
 		qos        = flag.Int("qos", 1, "QoS for published messages")
@@ -73,6 +73,7 @@ func main() {
 		format     = flag.String("format", "text", "Output format: text|json")
 		quiet      = flag.Bool("quiet", false, "Suppress logs while running")
 		block	   = flag.Int("block", 0, "ms of block between two clients")
+		pubprefix  = flag.Int("pubprefix", "pub", "initial prefix of publisher")
 		folderName = flag.String("folder", "experiments/untracked", "Name of the simulation folder")
 		fileName   = flag.String("file-name", fmt.Sprintf("%v", time.Now().Format("150405")), "Name of the file")
 	)
@@ -93,12 +94,16 @@ func main() {
 		if !*quiet {
 			log.Println("Starting client ", i)
 		}
+		
+		topicList := strings.Split(*topic, ",")
+		
+		for _, topicI := range topicList {		
 		c := &Client{
-			ID:         i,
+			ID:         *pubprefix + i,
 			BrokerURL:  *broker,
 			BrokerUser: *username,
 			BrokerPass: *password,
-			MsgTopic:   *topic,
+			MsgTopic:   topicList,
 			MsgSize:    *size,
 			MsgCount:   *count,
 			Delay:	    *delay,
@@ -107,7 +112,9 @@ func main() {
 			FileName:   *fileName,
 			Folder:	    *folderName,
 		}
+		
 		go c.Run(resCh)
+	}
 		time.Sleep(time.Duration(*block) * time.Millisecond)
 	}
 
