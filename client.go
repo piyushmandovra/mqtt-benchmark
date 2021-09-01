@@ -12,6 +12,7 @@ import (
 
 import (
 	"github.com/GaryBoone/GoStats/stats"
+	"github.com/thanhpk/randstr"
 	mqtt "github.com/eclipse/paho.mqtt.golang"
 )
 
@@ -139,7 +140,8 @@ func (c *Client) pubMessages(in, out chan *Message, doneGen, donePub chan bool) 
 			select {
 			case m := <-in:
 				m.Sent = time.Now()
-				payload := fmt.Sprintf("%v,%v,%v,%v", BrokerIP, c.ID, strconv.FormatInt(time.Now().UnixNano()/1000000, 10), ctr)
+				msg := randstr.String(c.MsgSize)
+				payload := fmt.Sprintf("%v,%v,%v,%v,%v", BrokerIP, c.ID, strconv.FormatInt(time.Now().UnixNano()/1000000, 10), ctr, msg)
 				token := client.Publish(m.Topic, m.QoS, false, payload)
 				token.Wait()
 				if token.Error() != nil {
@@ -150,7 +152,7 @@ func (c *Client) pubMessages(in, out chan *Message, doneGen, donePub chan bool) 
 					m.Error = false
 				}
 				out <- m
-				time.Sleep(time.Duration(c.Delay) * time.Second)	
+				time.Sleep(time.Duration(c.Delay) * time.Millisecond)	
 				if ctr > 0 && ctr%100 == 0 {
 					if !c.Quiet {
 						log.Printf("CLIENT %v published %v messages and keeps publishing...\n", c.ID, ctr)
