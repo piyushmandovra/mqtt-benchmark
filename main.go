@@ -73,7 +73,7 @@ func main() {
 		format     = flag.String("format", "text", "Output format: text|json")
 		quiet      = flag.Bool("quiet", false, "Suppress logs while running")
 		block	   = flag.Int("block", 0, "ms of block between two clients")
-		pubprefix  = flag.Int("pubprefix", "pub", "initial prefix of publisher")
+		pubprefix  = flag.String("pubprefix", "pub", "initial prefix of publisher")
 		folderName = flag.String("folder", "experiments/untracked", "Name of the simulation folder")
 		fileName   = flag.String("file-name", fmt.Sprintf("%v", time.Now().Format("150405")), "Name of the file")
 	)
