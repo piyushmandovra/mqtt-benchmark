@@ -103,7 +103,7 @@ func main() {
 			BrokerURL:  *broker,
 			BrokerUser: *username,
 			BrokerPass: *password,
-			MsgTopic:   topicList,
+			MsgTopic:   topicI,
 			MsgSize:    *size,
 			MsgCount:   *count,
 			Delay:	    *delay,
