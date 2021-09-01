@@ -10,7 +10,7 @@ import (
 	"os"
 	"strings"
 	"time"
-
+	"strconv"
 	"github.com/GaryBoone/GoStats/stats"
 )
 
@@ -99,7 +99,7 @@ func main() {
 		
 		for _, topicI := range topicList {		
 		c := &Client{
-			ID:         *pubprefix + i,
+			ID:         *pubprefix + strconv.Itoa(i),
 			BrokerURL:  *broker,
 			BrokerUser: *username,
 			BrokerPass: *password,
