@@ -17,7 +17,7 @@ import (
 )
 
 type Client struct {
-	ID         int
+	ID         string
 	BrokerURL  string
 	BrokerUser string
 	BrokerPass string
@@ -46,7 +46,7 @@ func (c *Client) Run(res chan *RunResults) {
 	// start publisher
 	go c.pubMessages(newMsgs, pubMsgs, doneGen, donePub)
 
-	runResults.ID = c.ID
+	// runResults.ID = c.ID
 	times := []float64{}
 	for {
 		select {
