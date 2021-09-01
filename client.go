@@ -1,10 +1,10 @@
 package main
 
 import (
-	"encoding/csv"
+	// "encoding/csv"
 	"fmt"
 	"log"
-	"os"
+	// "os"
 	"strconv"
 	"strings"
 	"time"
@@ -87,21 +87,21 @@ func (c *Client) Run(res chan *RunResults) {
 				brokerID = "local"	
 			}
 
-			//create file
-			os.MkdirAll(fmt.Sprintf("%v/raw/", c.Folder), os.ModePerm)
+			// //create file
+			// os.MkdirAll(fmt.Sprintf("%v/raw/", c.Folder), os.ModePerm)
 			
-			_file, err := os.Create(fmt.Sprintf("%v/raw/b%v_rawC%v_pub_%v.csv", c.Folder, brokerID, c.ID, c.FileName))
-			checkError("Cannot create file", err)
-			defer _file.Close()
+			// _file, err := os.Create(fmt.Sprintf("%v/raw/b%v_rawC%v_pub_%v.csv", c.Folder, brokerID, c.ID, c.FileName))
+			// checkError("Cannot create file", err)
+			// defer _file.Close()
 
-			_writer := csv.NewWriter(_file)
-			defer _writer.Flush()
+			// _writer := csv.NewWriter(_file)
+			// defer _writer.Flush()
 
-			//write to file
-			for _, value := range pubData {
-        			err := _writer.Write(value)
-				checkError("Cannot write to file", err)
-			}	
+			// //write to file
+			// for _, value := range pubData {
+        	// 		err := _writer.Write(value)
+			// 	checkError("Cannot write to file", err)
+			// }	
 
 			// report results and exit
 			res <- runResults
@@ -143,17 +143,20 @@ func (c *Client) pubMessages(in, out chan *Message, doneGen, donePub chan bool) 
 			case m := <-in:
 				m.Sent = time.Now()
 				msg := randstr.String(c.MsgSize)
-				payload := fmt.Sprintf("%v,%v,%v,%v,%v", BrokerIP, c.ID, strconv.FormatInt(time.Now().UnixNano()/1000000, 10), ctr, msg)
-				token := client.Publish(m.Topic, m.QoS, false, payload)
-				token.Wait()
-				if token.Error() != nil {
-					log.Printf("CLIENT %v Error sending message: %v\n", c.ID, token.Error())
-					m.Error = true
-				} else {
-					m.Delivered = time.Now()
-					m.Error = false
+				topicList := strings.Split(c.MsgTopic, ",")
+				for _, topicI := range topicList {
+					payload := fmt.Sprintf("%v,%v,%v,%v,%v", BrokerIP, c.ID, strconv.FormatInt(time.Now().UnixNano()/1000000, 10), ctr, msg)
+					token := client.Publish(topicI, m.QoS, false, payload)
+					token.Wait()
+					if token.Error() != nil {
+						log.Printf("CLIENT %v Error sending message: %v\n", c.ID, token.Error())
+						m.Error = true
+					} else {
+						m.Delivered = time.Now()
+						m.Error = false
+					}
+					out <- m
 				}
-				out <- m
 				time.Sleep(time.Duration(c.Delay) * time.Millisecond)	
 				if ctr > 0 && ctr%100 == 0 {
 					if !c.Quiet {

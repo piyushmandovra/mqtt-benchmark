@@ -2,12 +2,12 @@ package main
 
 import (
 	"bytes"
-	"encoding/csv"
+	// "encoding/csv"
 	"encoding/json"
 	"flag"
 	"fmt"
 	"log"
-	"os"
+	// "os"
 	"strings"
 	"time"
 	"strconv"
@@ -94,16 +94,13 @@ func main() {
 		if !*quiet {
 			log.Println("Starting client ", i)
 		}
-		
-		topicList := strings.Split(*topic, ",")
-		
-		for _, topicI := range topicList {		
+				
 		c := &Client{
 			ID:         *pubprefix + strconv.Itoa(i),
 			BrokerURL:  *broker,
 			BrokerUser: *username,
 			BrokerPass: *password,
-			MsgTopic:   topicI,
+			MsgTopic:   *topic,
 			MsgSize:    *size,
 			MsgCount:   *count,
 			Delay:	    *delay,
@@ -111,17 +108,16 @@ func main() {
 			Quiet:      *quiet,
 			FileName:   *fileName,
 			Folder:	    *folderName,
-		}
-		
+		}	
 		go c.Run(resCh)
-	}
+
 		time.Sleep(time.Duration(*block) * time.Millisecond)
 	}
 
 	// collect the results
 	results := make([]*RunResults, *clients)
 	for i := 0; i < *clients; i++ {
-		results[i] = <-resCh
+			results[i] = <-resCh
 	}
 	totalTime := time.Now().Sub(start)
 	totals := calculateTotalResults(results, totalTime, *clients)
@@ -171,8 +167,8 @@ func calculateTotalResults(results []*RunResults, totalTime time.Duration, sampl
 }
 
 func printResults(results []*RunResults, totals *TotalResults, broker string, folder string, name string, format string) {
-	data := [][]string{}
-	var resToString [7]string
+	// data := [][]string{}
+	// var resToString [7]string
 
 	switch format {
 	case "json":
@@ -220,33 +216,33 @@ func printResults(results []*RunResults, totals *TotalResults, broker string, fo
 		broker = "local"	
 	}
 	
-	//folder should be already present (created by the bash script)
-	os.MkdirAll(folder, os.ModePerm)
+	// //folder should be already present (created by the bash script)
+	// os.MkdirAll(folder, os.ModePerm)
 
-	//filename: b2_pubtime_HHmmSS 
-	file, err := os.Create(fmt.Sprintf("%v/pubtime_b%v_%v.csv", folder, broker, name))
-	checkError("Cannot create file", err)
-	defer file.Close()
+	// //filename: b2_pubtime_HHmmSS 
+	// file, err := os.Create(fmt.Sprintf("%v/pubtime_b%v_%v.csv", folder, broker, name))
+	// checkError("Cannot create file", err)
+	// defer file.Close()
 
-	writer := csv.NewWriter(file)
-	defer writer.Flush()
+	// writer := csv.NewWriter(file)
+	// defer writer.Flush()
 
-	for _, res := range results{
-		resToString[0] = fmt.Sprintf("%d", res.ID)
-		resToString[1] = fmt.Sprintf("%.3f", res.RunTime)
-		resToString[2] = fmt.Sprintf("%.3f", res.MsgTimeMin)
-		resToString[3] = fmt.Sprintf("%.3f", res.MsgTimeMax)
-		resToString[4] = fmt.Sprintf("%.3f", res.MsgTimeMean)
-		resToString[5] = fmt.Sprintf("%.3f", res.MsgTimeStd)
-		resToString[6] = fmt.Sprintf("%.3f", res.MsgsPerSec)
-		data = append(data, []string{fmt.Sprintf("broker_%v", broker), resToString[0], resToString[1], resToString[2], resToString[3],
-						resToString[4], resToString[5], resToString[6]})
-	}
+	// for _, res := range results{
+	// 	resToString[0] = fmt.Sprintf("%d", res.ID)
+	// 	resToString[1] = fmt.Sprintf("%.3f", res.RunTime)
+	// 	resToString[2] = fmt.Sprintf("%.3f", res.MsgTimeMin)
+	// 	resToString[3] = fmt.Sprintf("%.3f", res.MsgTimeMax)
+	// 	resToString[4] = fmt.Sprintf("%.3f", res.MsgTimeMean)
+	// 	resToString[5] = fmt.Sprintf("%.3f", res.MsgTimeStd)
+	// 	resToString[6] = fmt.Sprintf("%.3f", res.MsgsPerSec)
+	// 	data = append(data, []string{fmt.Sprintf("broker_%v", broker), resToString[0], resToString[1], resToString[2], resToString[3],
+	// 					resToString[4], resToString[5], resToString[6]})
+	// }
 
-	for _, value := range data {
-        	err := writer.Write(value)
-		checkError("Cannot write to file", err)
-	}	
+	// for _, value := range data {
+    //     	err := writer.Write(value)
+	// 	checkError("Cannot write to file", err)
+	// }	
 
 	return
 }
