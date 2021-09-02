@@ -79,13 +79,7 @@ func (c *Client) Run(res chan *RunResults) {
 				runResults.MsgTimeStd = stats.StatsSampleStandardDeviation(times)
 			}
 
-			//parse broker ID
-			if strings.Contains(brokerID, ".") {
-				//remove tcp:// remove port (after :)
-				strings.Trim(strings.Split(brokerID, ":")[1], "//")
-			} else {
-				brokerID = "local"	
-			}
+			// 	//remove tcp:// remove port (after :)
 
 			// //create file
 			// os.MkdirAll(fmt.Sprintf("%v/raw/", c.Folder), os.ModePerm)
@@ -132,7 +126,7 @@ func (c *Client) pubMessages(in, out chan *Message, doneGen, donePub chan bool) 
 		BrokerIP := c.BrokerURL
 		if strings.Contains(c.BrokerURL, ".") {
 		//remove tcp:// remove port (after :)
-			BrokerIP = strings.Split(c.BrokerURL, ".")[2]
+			BrokerIP = strings.Trim(strings.Split(c.BrokerURL, ":")[1], "//")
 		} else {
 			BrokerIP = "local"	
 		}
