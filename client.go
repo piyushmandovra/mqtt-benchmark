@@ -38,7 +38,7 @@ func (c *Client) Run(res chan *RunResults) {
 	donePub := make(chan bool)
 	runResults := new(RunResults)
 	pubData := [][]string{}
-	brokerID := c.BrokerURL
+	// brokerID := c.BrokerURL
 
 	started := time.Now()
 	// start generator
