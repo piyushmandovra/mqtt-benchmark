@@ -82,7 +82,7 @@ func (c *Client) Run(res chan *RunResults) {
 			//parse broker ID
 			if strings.Contains(brokerID, ".") {
 				//remove tcp:// remove port (after :)
-				brokerID = strings.Split(brokerID, ".")[2]
+				strings.Trim(strings.Split(brokerID, ":")[1], "//")
 			} else {
 				brokerID = "local"	
 			}
