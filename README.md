@@ -5,9 +5,11 @@ A simple MQTT (broker) benchmarking tool.
 Installation:
 
 ```
-go get github.com/piyushmandovra/mqtt-benchmark
+go install github.com/piyushmandovra/mqtt-benchmark
 ```
-
+```
+mqtt-benchmark --help
+```
 
 Example use and output:
 
