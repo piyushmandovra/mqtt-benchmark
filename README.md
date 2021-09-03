@@ -5,28 +5,9 @@ A simple MQTT (broker) benchmarking tool.
 Installation:
 
 ```
-go get github.com/krylovsk/mqtt-benchmark
+go get github.com/piyushmandovra/mqtt-benchmark
 ```
 
-All dependencies are vendored with [manul](https://github.com/kovetskiy/manul).
-
-The tool supports multiple concurrent clients, configurable message size, etc:
-```
-> mqtt-benchmark --help
-Usage of mqtt-benchmark:
-  -broker="tcp://localhost:1883": MQTT broker endpoint as scheme://host:port
-  -clients=10: Number of clients to start
-  -count=100: Number of messages to send per client
-  -format="text": Output format: text|json
-  -password="": MQTT password (empty if auth disabled)
-  -qos=1: QoS for published messages
-  -quiet=false : Suppress logs while running (except errors and the result)
-  -size=100: Size of the messages payload (bytes)
-  -topic="/test": MQTT topic for incoming message
-  -username="": MQTT username (empty if auth disabled)
-```
-
-Two output formats supported: human-readable plain text and JSON.
 
 Example use and output:
 
